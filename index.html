@@ -2,99 +2,227 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Dev Editor Online</title>
+<title>DevFlow</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:#0f172a;
+  font-family:system-ui;
+  background:linear-gradient(135deg,#050505,#0f0f0f);
   color:white;
-  text-align:center;
 }
 
-h1{
-  margin:10px;
+/* HEADER */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:rgba(20,20,20,0.8);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid #222;
 }
 
-textarea{
-  width:90%;
-  height:100px;
-  margin:5px;
-  background:#020617;
-  color:#22c55e;
-  border:none;
+.logo{
+  color:red;
+  font-weight:bold;
+  font-size:20px;
+}
+
+.tag{
+  font-size:12px;
+  color:#aaa;
+}
+
+/* CONTAINER */
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
   padding:10px;
-  border-radius:8px;
 }
 
+/* EDITOR */
+textarea{
+  width:92%;
+  height:85px;
+  margin:6px;
+  background:#0f0f0f;
+  color:#00ff88;
+  border:1px solid #222;
+  border-radius:12px;
+  padding:10px;
+  font-size:13px;
+  outline:none;
+  transition:0.2s;
+}
+
+textarea:focus{
+  border:1px solid red;
+  transform:scale(1.01);
+}
+
+/* BOTÕES */
+button{
+  padding:10px 16px;
+  margin:6px;
+  border:none;
+  border-radius:10px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* PREVIEW */
 iframe{
   width:95%;
-  height:280px;
+  height:320px;
   background:white;
   border:none;
+  border-radius:12px;
   margin-top:10px;
-  border-radius:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-button{
-  padding:10px 15px;
+/* PAINEL */
+#painel{
+  width:92%;
+  margin:10px;
+  padding:10px;
+  background:rgba(20,20,20,0.8);
+  border:1px solid #222;
+  border-radius:12px;
+}
+
+.item{
+  background:#1a1a1a;
+  padding:8px;
   margin:5px;
-  border:none;
-  background:#22c55e;
-  color:black;
-  font-weight:bold;
-  border-radius:6px;
+  border-radius:8px;
   cursor:pointer;
+  transition:0.2s;
+}
+
+.item:hover{
+  background:#222;
+  transform:scale(1.02);
+}
+
+/* CONSOLE */
+#console{
+  width:92%;
+  margin:10px;
+  padding:10px;
+  background:black;
+  border:1px solid #222;
+  border-radius:12px;
+  font-size:12px;
+  color:#00ff88;
+  height:100px;
+  overflow:auto;
 }
 </style>
 </head>
 
 <body>
 
-<h1>💻 Dev Editor Online</h1>
+<header>
+  <div class="logo">📱DevFlow</div>
+  <div class="tag">Devflow mini VScode para mobile, feito diretamente do mobile "desenvolvedor kawansky"</div>
+</header>
 
-<textarea id="html"><h1>Olá 🔥</h1></textarea>
+<div class="container">
+
+<textarea id="html"><h1 style="color:red;">DevFlow 🚀</h1></textarea>
+
 <textarea id="css">body{ text-align:center; }</textarea>
-<textarea id="js">console.log("JS ok")</textarea>
 
-<br>
+<textarea id="js">console.log("DevFlow UI ON")</textarea>
 
-<button onclick="rodar()">▶️ Rodar</button>
-<button onclick="limpar()">🗑️ Limpar</button>
-<button onclick="salvar()">💾 Salvar</button>
+<div>
+<button onclick="run()">▶ Rodar</button>
+<button onclick="save()">💾 Salvar</button>
+<button onclick="clearAll()">🗑 Limpar</button>
+</div>
 
-<iframe id="resultado"></iframe>
+<div id="painel">
+<h3>📁 Projetos</h3>
+</div>
+
+<iframe id="preview"></iframe>
+
+<div id="console">Console:</div>
+
+</div>
 
 <script>
-function rodar(){
+
+let projects = JSON.parse(localStorage.getItem("devflow_ui")) || [];
+
+function log(msg){
+  document.getElementById("console").innerHTML += "<br>› " + msg;
+}
+
+function run(){
   let html = document.getElementById("html").value;
   let css = "<style>" + document.getElementById("css").value + "</style>";
-  let js = "<script>" + document.getElementById("js").value + "<\/script>";
+  let js = document.getElementById("js").value;
 
-  document.getElementById("resultado").srcdoc = html + css + js;
+  document.getElementById("preview").srcdoc =
+    html + css + "<script>"+js+"<\/script>";
+
+  log("✔ Rodando código");
 }
 
-function limpar(){
-  document.getElementById("html").value="";
-  document.getElementById("css").value="";
-  document.getElementById("js").value="";
-  document.getElementById("resultado").srcdoc="";
+function save(){
+  let name = prompt("Nome do projeto:");
+  if(!name) return;
+
+  projects.push({
+    name,
+    html:html.value,
+    css:css.value,
+    js:js.value
+  });
+
+  localStorage.setItem("devflow_ui", JSON.stringify(projects));
+  list();
+  log("💾 Projeto salvo");
 }
 
-function salvar(){
-  localStorage.setItem("html", document.getElementById("html").value);
-  localStorage.setItem("css", document.getElementById("css").value);
-  localStorage.setItem("js", document.getElementById("js").value);
-  alert("Salvo!");
+function list(){
+  let box = document.getElementById("painel");
+  box.innerHTML = "<h3>📁 Projetos</h3>";
+
+  projects.forEach((p,i)=>{
+    box.innerHTML += `<div class="item" onclick="openP(${i})">${p.name}</div>`;
+  });
 }
 
-window.onload = () => {
-  document.getElementById("html").value = localStorage.getItem("html") || "<h1>Olá 🔥</h1>";
-  document.getElementById("css").value = localStorage.getItem("css") || "body{ text-align:center; }";
-  document.getElementById("js").value = localStorage.getItem("js") || 'console.log("JS ok")';
-  rodar();
-};
+function openP(i){
+  html.value = projects[i].html;
+  css.value = projects[i].css;
+  js.value = projects[i].js;
+  run();
+  log("📂 Projeto aberto");
+}
+
+function clearAll(){
+  html.value="";
+  css.value="";
+  js.value="";
+  preview.srcdoc="";
+  document.getElementById("console").innerHTML="Console:";
+}
+
+window.onload = list;
+
 </script>
 
 </body>
