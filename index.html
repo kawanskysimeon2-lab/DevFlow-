@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Dev Editor Online</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+}
+
+h1{
+  margin:10px;
+}
+
+textarea{
+  width:90%;
+  height:100px;
+  margin:5px;
+  background:#020617;
+  color:#22c55e;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+}
+
+iframe{
+  width:95%;
+  height:280px;
+  background:white;
+  border:none;
+  margin-top:10px;
+  border-radius:8px;
+}
+
+button{
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  background:#22c55e;
+  color:black;
+  font-weight:bold;
+  border-radius:6px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>💻 Dev Editor Online</h1>
+
+<textarea id="html"><h1>Olá 🔥</h1></textarea>
+<textarea id="css">body{ text-align:center; }</textarea>
+<textarea id="js">console.log("JS ok")</textarea>
+
+<br>
+
+<button onclick="rodar()">▶️ Rodar</button>
+<button onclick="limpar()">🗑️ Limpar</button>
+<button onclick="salvar()">💾 Salvar</button>
+
+<iframe id="resultado"></iframe>
+
+<script>
+function rodar(){
+  let html = document.getElementById("html").value;
+  let css = "<style>" + document.getElementById("css").value + "</style>";
+  let js = "<script>" + document.getElementById("js").value + "<\/script>";
+
+  document.getElementById("resultado").srcdoc = html + css + js;
+}
+
+function limpar(){
+  document.getElementById("html").value="";
+  document.getElementById("css").value="";
+  document.getElementById("js").value="";
+  document.getElementById("resultado").srcdoc="";
+}
+
+function salvar(){
+  localStorage.setItem("html", document.getElementById("html").value);
+  localStorage.setItem("css", document.getElementById("css").value);
+  localStorage.setItem("js", document.getElementById("js").value);
+  alert("Salvo!");
+}
+
+window.onload = () => {
+  document.getElementById("html").value = localStorage.getItem("html") || "<h1>Olá 🔥</h1>";
+  document.getElementById("css").value = localStorage.getItem("css") || "body{ text-align:center; }";
+  document.getElementById("js").value = localStorage.getItem("js") || 'console.log("JS ok")';
+  rodar();
+};
+</script>
+
+</body>
+</html>
